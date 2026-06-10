@@ -1,0 +1,6 @@
+{
+  "name": "منصة الاختبارات الذكية",
+  "description": "منصة تعليمية متكاملة لإنشاء الاختبارات التفاعلية، وإدارة مشاركة الطلاب، وتصحيح الإجابات تلقائياً وعرض إحصائيات لوحة المعلم بشكل احترافي.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

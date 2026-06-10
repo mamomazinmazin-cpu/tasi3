@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --color-slate-50: #070913; /* Deepest background */
+  --color-slate-100: #0f1322; /* Medium-dark background for list items and inputs */
+  --color-slate-150: #1b2035;
+  --color-slate-200: #1e243e; /* Nice medium slate-border */
+  --color-slate-205: #2c3356;
+  --color-slate-300: #2c3356; /* Active/bold border */
+  --color-slate-400: #94a3b8; /* Muted slate text */
+  --color-slate-500: #cbd5e1; /* Regular description text */
+  --color-slate-600: #e2e8f0; /* Clear labels */
+  --color-slate-700: #f1f5f9; /* Near-white labels */
+  --color-slate-800: #f8fafc; /* Title text / white reading */
+  --color-slate-900: #ffffff; /* Outstanding headings / pure white */
+  
+  --color-indigo-50: #0b0f24; /* Deepest indigo card background */
+  --color-indigo-100: #151b3a; /* Deep indigo accent overlay */
+  --color-indigo-200: #312e81; /* Midnight indigo accent */
+  --color-indigo-500: #6366f1; /* Neon-vibrant indigo */
+  --color-indigo-600: #818cf8; /* Extra vibrant indigo */
+  --color-indigo-650: #a5b4fc; /* High contrast readable indigo string */
+  --color-indigo-700: #c7d2fe; /* Muted lavender white text */
+  --color-indigo-805: #e0e7ff;
+  --color-indigo-900: #090b17; /* Slate header */
+  
+  --color-white: #0a0e1a; /* All card containers map to sleek dark slate backgrounds */
+  
+  --color-teal-50: #041217;
+  --color-teal-600: #2dd4bf;
+  --color-teal-650: #5eead4;
+  --color-teal-700: #99f6e4;
+  --color-teal-800: #ccfbf1;
+}
+
+body {
+  background-color: #070913;
+  color: #f8fafc;
+  font-family: 'Cairo', 'Inter', sans-serif;
+}
+
+/* Custom scrollbar to match dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #070913;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e243e;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2c3356;
+}

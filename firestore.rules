@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidExam(data) {
+      return data.teacherName is string
+          && data.subject is string
+          && data.code is string
+          && data.createdBy is string
+          && data.questions is list;
+    }
+
+    function isValidSubmission(data) {
+      return data.studentName is string
+          && data.status is string
+          && data.uid is string
+          && data.answers is map;
+    }
+
+    match /exams/{examId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn() && incoming().createdBy == request.auth.uid && isValidExam(incoming());
+      allow update: if isSignedIn() && resource.data.createdBy == request.auth.uid && incoming().createdBy == request.auth.uid && isValidExam(incoming());
+      allow delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
+
+      match /submissions/{submissionId} {
+        allow get: if isSignedIn() && (
+          get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+        allow list: if isSignedIn() && (
+          get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+        allow create: if isSignedIn() && incoming().uid == request.auth.uid && isValidSubmission(incoming());
+        allow update: if isSignedIn() && (
+          (resource.data.uid == request.auth.uid && incoming().uid == request.auth.uid && isValidSubmission(incoming()) && resource.data.status == 'started') ||
+          get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid
+        );
+        allow delete: if isSignedIn() && get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid;
+      }
+    }
+  }
+}

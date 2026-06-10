@@ -1,0 +1,47 @@
+{
+  "entities": {
+    "Exam": {
+      "title": "Exam",
+      "description": "Represents an online electronic exam created by a teacher.",
+      "type": "object",
+      "properties": {
+        "teacherName": { "type": "string", "description": "The name of the teacher who created the exam." },
+        "subject": { "type": "string", "description": "The subject/course of the exam." },
+        "duration": { "type": "integer", "description": "Duration of the exam in minutes." },
+        "totalMarks": { "type": "number", "description": "Maximum marks for this exam." },
+        "code": { "type": "string", "description": "6-character unique code to access the exam." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp." },
+        "createdBy": { "type": "string", "description": "Teacher user ID who owns this exam." },
+        "questions": { "type": "array", "description": "List of questions for this exam." },
+        "isFavorite": { "type": "boolean", "description": "Whether this exam is marked as a favorite for quick access." }
+      },
+      "required": ["teacherName", "subject", "duration", "totalMarks", "code", "createdAt", "createdBy", "questions"]
+    },
+    "Submission": {
+      "title": "Submission",
+      "description": "Represents a student's submission for an exam.",
+      "type": "object",
+      "properties": {
+        "studentName": { "type": "string", "description": "Three-part name of the student." },
+        "startedAt": { "type": "string", "format": "date-time", "description": "Start timestamp of the attempt." },
+        "submittedAt": { "type": "string", "format": "date-time", "description": "Submit timestamp of the attempt." },
+        "answers": { "type": "object", "description": "Key-value of questionId and student answer." },
+        "score": { "type": "number", "description": "Score obtained by auto-grading objective questions." },
+        "totalScorePossible": { "type": "number", "description": "Total marks for the exam." },
+        "gradedAnswers": { "type": "object", "description": "Key-value details of graded questions." },
+        "status": { "type": "string", "enum": ["started", "submitted"], "description": "Attempt status." }
+      },
+      "required": ["studentName", "startedAt", "submittedAt", "answers", "score", "totalScorePossible", "gradedAnswers", "status"]
+    }
+  },
+  "firestore": {
+    "/exams/{examId}": {
+      "schema": "Exam",
+      "description": "Exams collection created by teachers."
+    },
+    "/exams/{examId}/submissions/{submissionId}": {
+      "schema": "Submission",
+      "description": "Submissions subcollection for a given exam, completed by students."
+    }
+  }
+}
