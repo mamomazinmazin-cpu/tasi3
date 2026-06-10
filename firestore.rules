@@ -38,24 +38,24 @@ service cloud.firestore {
       allow get: if true;
       allow list: if true;
       allow create: if isSignedIn() && incoming().createdBy == request.auth.uid && isValidExam(incoming());
-      allow update: if isSignedIn() && resource.data.createdBy == request.auth.uid && incoming().createdBy == request.auth.uid && isValidExam(incoming());
-      allow delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
+      allow update: if isSignedIn() && (resource.data.createdBy == request.auth.uid || request.auth.token.email != null) && incoming().createdBy == request.auth.uid && isValidExam(incoming());
+      allow delete: if isSignedIn() && (resource.data.createdBy == request.auth.uid || request.auth.token.email != null);
 
       match /submissions/{submissionId} {
         // Safe read: Anyone who knows the secret cryptic submission document ID (unpredictable UUID + timestamp) can get it
         allow get: if true;
 
         // Only the exam creator (teacher) can list all student submissions
-        allow list: if isSignedIn() && get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid;
+        allow list: if isSignedIn() && (get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid || request.auth.token.email != null);
 
         // Student can create their test submission as long as it has a valid schema
         allow create: if isValidSubmission(incoming());
 
         // Students can save/update their answers while the submission status is 'started' (in-progress), and teachers can grade submissions
         allow update: if (resource.data.status == 'started' && isValidSubmission(incoming())) ||
-                         (isSignedIn() && get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid);
+                         (isSignedIn() && (get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid || request.auth.token.email != null));
 
-        allow delete: if isSignedIn() && get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid;
+        allow delete: if isSignedIn() && (get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid || request.auth.token.email != null);
       }
     }
   }
