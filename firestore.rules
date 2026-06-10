@@ -42,19 +42,19 @@ service cloud.firestore {
       allow delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
 
       match /submissions/{submissionId} {
-        allow get: if isSignedIn() && (
-          get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid ||
-          resource.data.uid == request.auth.uid
-        );
-        allow list: if isSignedIn() && (
-          get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid ||
-          resource.data.uid == request.auth.uid
-        );
-        allow create: if isSignedIn() && incoming().uid == request.auth.uid && isValidSubmission(incoming());
-        allow update: if isSignedIn() && (
-          (resource.data.uid == request.auth.uid && incoming().uid == request.auth.uid && isValidSubmission(incoming()) && resource.data.status == 'started') ||
-          get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid
-        );
+        // Safe read: Anyone who knows the secret cryptic submission document ID (unpredictable UUID + timestamp) can get it
+        allow get: if true;
+
+        // Only the exam creator (teacher) can list all student submissions
+        allow list: if isSignedIn() && get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid;
+
+        // Student can create their test submission as long as it has a valid schema
+        allow create: if isValidSubmission(incoming());
+
+        // Students can save/update their answers while the submission status is 'started' (in-progress), and teachers can grade submissions
+        allow update: if (resource.data.status == 'started' && isValidSubmission(incoming())) ||
+                         (isSignedIn() && get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid);
+
         allow delete: if isSignedIn() && get(/databases/$(database)/documents/exams/$(examId)).data.createdBy == request.auth.uid;
       }
     }

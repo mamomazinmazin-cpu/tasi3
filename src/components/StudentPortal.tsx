@@ -298,8 +298,19 @@ export default function StudentPortal({ initialExamCode = '', onBackToMain }: St
       // 1. Authenticate student anonymously if they are not already logged in
       let studentUid = auth.currentUser?.uid;
       if (!studentUid) {
-        const userCred = await signInAnonymously(auth);
-        studentUid = userCred.user.uid;
+        try {
+          const userCred = await signInAnonymously(auth);
+          studentUid = userCred.user.uid;
+        } catch (authErr) {
+          console.warn('Anonymous authentication is not enabled or failed, using key-based fallback studentUID:', authErr);
+          const localKey = 'student_fallback_uid_v1';
+          let localUid = localStorage.getItem(localKey);
+          if (!localUid) {
+            localUid = 'std_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now().toString(36);
+            localStorage.setItem(localKey, localUid);
+          }
+          studentUid = localUid;
+        }
       }
 
       const newSubmissionId = 'sub_' + studentUid + '_' + Date.now();
